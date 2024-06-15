@@ -1,0 +1,36 @@
+.playlist-name-input {
+    border-radius: 50px;
+    border: none;
+    border:1px solid #eaeaea;
+    font-size: 1.4em;
+    height: 20px;
+    margin: 20px;
+    outline:none;
+    padding: 10px 30px;
+    width: 500px;
+}
+
+.create-playlist-bar{
+    align-items: end;
+    background-color: var(--searchBar);
+    border: none;
+    display: flex;
+    flex-direction: column;
+    font-size: 1em;
+    height: 80px;
+    justify-content: center;
+    width: 100%;
+}
+
+.create-playlist-button {
+    background-color: #04AA6D; /* Green */
+    border-radius: 50px;
+    border: none;
+    color: white;
+    display: inline-block;
+    font-size: 1em;
+    margin-right: 20px;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+}

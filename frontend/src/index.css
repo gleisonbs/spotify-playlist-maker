@@ -1,0 +1,24 @@
+:root {
+  --backgroundColor: #121212; 
+  --highligthedRow: #b3b3b3;
+  --selectedRow: #c8c8c8;
+  --searchBar: #222222;
+  --textColor: #fff;
+  --emptyBoxTextColor: #cfcfcf;
+}
+
+body {
+  background-color: var(--backgroundColor);
+  color: var(--textColor);
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
