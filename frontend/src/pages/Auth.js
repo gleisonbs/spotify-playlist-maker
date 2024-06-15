@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import env from "react-dotenv";
 
 const randSeq = ({ length }) => {
   const characters = "abcdefghijklmnopqrstuvwxyz";
@@ -11,8 +12,8 @@ const randSeq = ({ length }) => {
   return result;
 };
 
-const CLIENT_ID = ""
-const REDIRECT_URI = "http://localhost:3001/"
+const CLIENT_ID = env.CLIENT_ID;
+const REDIRECT_URI = env.REDIRECT_URI;
 
 const redirectToAuthPage = () => {
   const scope =
@@ -29,7 +30,6 @@ const redirectToAuthPage = () => {
   });
   url.search = params.toString();
 
-  console.log(url.toString());
   window.location.replace(url.toString());
 };
 

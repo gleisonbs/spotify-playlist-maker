@@ -2,10 +2,11 @@ import axios from "axios";
 import { Buffer } from "buffer";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import env from "react-dotenv";
 
-const REDIRECT_URI = "http://localhost:3001/";
-const CLIENT_ID = "";
-const CLIENT_SECRET = "";
+const REDIRECT_URI = env.REDIRECT_URI;
+const CLIENT_ID = env.CLIENT_ID;
+const CLIENT_SECRET = env.CLIENT_SECRET;
 
 const makeUserRequest = async ({ accessToken }) => {
   const response = await axios.get("https://api.spotify.com/v1/me", {
