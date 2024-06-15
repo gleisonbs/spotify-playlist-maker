@@ -9,8 +9,6 @@ import (
 func main() {
 	app := fiber.New()
 	app.Use(cors.New())
-	app.Get("/auth", controllers.Authorize)
-	app.Get("/", controllers.AuthWithCode)
 	app.Get("/playlist", controllers.ListPlaylists)
 	app.Post("/:userId/playlist/new", controllers.CreatePlaylistWithRecommendations)
 	app.Get("/playlist/:playlistId", controllers.GetPlaylistItems)
