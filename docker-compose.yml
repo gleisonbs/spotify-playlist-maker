@@ -1,0 +1,12 @@
+# docker-compose.yml
+version: '3.7'
+
+services:
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "5555:5555"
+    volumes:
+      - .:/api
