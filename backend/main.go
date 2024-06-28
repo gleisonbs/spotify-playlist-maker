@@ -6,6 +6,10 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 )
 
+func healthCheck(ctx *fiber.Ctx) error {
+	return ctx.SendString("Healthy")
+}
+
 func main() {
 	app := fiber.New()
 	app.Use(cors.New())
@@ -15,5 +19,6 @@ func main() {
 	app.Get("/playlist/:playlistId", controllers.GetPlaylistItems)
 	app.Get("/recommendations", controllers.ListTrackRecommendations)
 	app.Get("/search", controllers.SearchItems)
+	app.Get("/health", healthCheck)
 	app.Listen(":5555")
 }
