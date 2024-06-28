@@ -1,12 +1,10 @@
 import axios from "axios";
-import { Buffer } from "buffer";
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import env from "react-dotenv";
 
 const REDIRECT_URI = env.REDIRECT_URI;
 const CLIENT_ID = env.CLIENT_ID;
-const CLIENT_SECRET = env.CLIENT_SECRET;
 
 const makeUserRequest = async ({ accessToken }) => {
   const response = await axios.get("https://api.spotify.com/v1/me", {
@@ -14,36 +12,43 @@ const makeUserRequest = async ({ accessToken }) => {
   });
   if (response.status === 200) {
     const { id } = response.data;
-    localStorage.setItem("spotify-utils:userId", id);
+    localStorage.setItem("spotify-utils:user_id", id);
   }
 };
 
-const makeAuthRequestWithCode = async ({ code, setAccessToken }) => {
-  const form = new URLSearchParams({
-    code: code,
+const getToken = async ({ code, setAccessToken }) => {
+  let codeVerifier = localStorage.getItem('code_verifier');
+
+  const payload = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: new URLSearchParams({
+      client_id: CLIENT_ID,
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: REDIRECT_URI,
+      code_verifier: codeVerifier,
+    }),
+  }
+
+  console.log({
+    client_id: CLIENT_ID,
+    grant_type: 'authorization_code',
+    code,
     redirect_uri: REDIRECT_URI,
-    grant_type: "authorization_code",
-  });
+    code_verifier: codeVerifier,
+  })
 
-  const auth = Buffer.from(CLIENT_ID + ":" + CLIENT_SECRET).toString("base64");
-  const authTokenUrl = "https://accounts.spotify.com/api/token";
-  try {
-    const response = await axios.post(authTokenUrl, form.toString(), {
-      headers: {
-        Authorization: "Basic " + auth,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    });
-    if (response?.status === 200) {
-      const { access_token: accessToken } = response.data;
-      setAccessToken(accessToken);
-      localStorage.setItem("spotify-utils:accessToken", accessToken);
-    }
-    return response;
-  } catch (error) {
-    console.log(error);
-  }
-};
+  const url = "https://accounts.spotify.com/api/token";
+  const body = await fetch(url, payload);
+  const response = await body.json();
+
+  const { access_token: accessToken } = response
+  setAccessToken(accessToken);
+  localStorage.setItem("spotify-utils:access_token", accessToken);
+}
 
 export default function Main() {
   const [searchParams] = useSearchParams();
@@ -51,8 +56,9 @@ export default function Main() {
 
   useEffect(() => {
     const code = searchParams.get("code");
+    
     if (!accessToken) {
-      makeAuthRequestWithCode({ code, setAccessToken });
+      getToken({ code, setAccessToken });
     } else {
       makeUserRequest({ accessToken });
     }

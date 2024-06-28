@@ -28,7 +28,7 @@ export default function Playlist() {
         return;
       }
       
-      const accessToken = localStorage.getItem("spotify-utils:accessToken");
+      const accessToken = localStorage.getItem("spotify-utils:access_token");
       const querystring = queryString.stringify({
         q: text,
         type: "track",
@@ -96,10 +96,8 @@ export default function Playlist() {
       return;
     }
 
-    const userId = localStorage.getItem("spotify-utils:userId");
-    const accessToken = localStorage.getItem("spotify-utils:accessToken");
-
-    console.log(accessToken, playlistName, tracksSelected.join(","), userId);
+    const userId = localStorage.getItem("spotify-utils:user_id");
+    const accessToken = localStorage.getItem("spotify-utils:access_token");
 
     const response = await axios.post(
       `http://localhost:5555/${userId}/playlist/new`,
@@ -111,7 +109,11 @@ export default function Playlist() {
       }
     );
 
-    console.log(response.data);
+    if (response.status === 200) {
+      alert(`Playlist "${playlistName}" criada`);
+    } else {
+      alert('error')
+    }
   };
 
   return (

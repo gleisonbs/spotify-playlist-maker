@@ -1,37 +1,57 @@
 import { useEffect } from "react";
 import env from "react-dotenv";
 
-const randSeq = ({ length }) => {
-  const characters = "abcdefghijklmnopqrstuvwxyz";
-  let result = " ";
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-
-  return result;
-};
 
 const CLIENT_ID = env.CLIENT_ID;
 const REDIRECT_URI = env.REDIRECT_URI;
 
-const redirectToAuthPage = () => {
+const generateRandomString = ({ length }) => {
+  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const values = crypto.getRandomValues(new Uint8Array(length));
+  return values.reduce((acc, x) => acc + possible[x % possible.length], "");
+}
+
+const sha256 = async (plain) => {
+  const encoder = new TextEncoder()
+  const data = encoder.encode(plain)
+  return window.crypto.subtle.digest('SHA-256', data)
+}
+
+const base64encode = (input) => {
+  return btoa(String.fromCharCode(...new Uint8Array(input)))
+    .replace(/=/g, '')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_');
+}
+
+const redirectToAuthPage = async () => {
+  const codeVerifier = generateRandomString({ length: 64 });
+  
+  const hashed = await sha256(codeVerifier)
+  const codeChallenge = base64encode(hashed);
+
+  const clientId = CLIENT_ID;
+  const redirectUri = REDIRECT_URI
+
   const scope =
     "user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private";
-  const state = randSeq(16);
+  const authUrl = new URL("https://accounts.spotify.com/authorize")
 
-  const url = new URL("https://accounts.spotify.com/authorize");
-  const params = new URLSearchParams({
-    "response_type": "code",
-    "client_id": CLIENT_ID,
-    "scope": scope,
-    "redirect_uri": REDIRECT_URI,
-    "state": state
-  });
-  url.search = params.toString();
+  // generated in the previous step
+  window.localStorage.setItem('code_verifier', codeVerifier);
 
-  window.location.replace(url.toString());
-};
+  const params = {
+    response_type: 'code',
+    client_id: clientId,
+    scope,
+    code_challenge_method: 'S256',
+    code_challenge: codeChallenge,
+    redirect_uri: redirectUri,
+  }
+
+  authUrl.search = new URLSearchParams(params).toString();
+  window.location.href = authUrl.toString();
+}
 
 export default function Auth() {
   useEffect(() => {
